@@ -95,3 +95,4 @@ reviewed, tested, and modified as needed to ensure it meets the project's requir
 - Reviewing the whole code to find potential issues or problems.
 - Helping to redact the `README.md` file
 - Helping to set-up integration tests.
+- Fine-tunning for JVM parameters and Dockerfile optimizations.
