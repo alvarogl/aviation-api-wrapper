@@ -9,6 +9,9 @@ app:
     airports-path: /v1/airports
     connect-timeout-ms: 2000
     read-timeout-ms: 3000
+  cache:
+    airports:
+      spec: maximumSize=500,expireAfterWrite=10m
 management:
   endpoints:
     web:
