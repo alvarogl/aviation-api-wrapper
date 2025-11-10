@@ -1,6 +1,7 @@
 package com.example.aviationapiwrapper.provider.aviationapi;
 
 import com.example.aviationapiwrapper.model.Airport;
+import com.example.aviationapiwrapper.observability.MetricsService;
 import com.example.aviationapiwrapper.provider.AviationProvider;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -22,15 +23,20 @@ import static com.example.aviationapiwrapper.config.WebClientConfig.AVIATION_WEB
 @Component
 @Slf4j
 public class AviationApiClient implements AviationProvider {
+    private static final String SERVICE_NAME = "aviationapi";
+
     private final WebClient aviationWebClient;
     private final AviationApiMapper mapper;
     private final String airportsPath;
+    private final MetricsService metrics;
 
     public AviationApiClient(@Qualifier(AVIATION_WEB_CLIENT) WebClient aviationWebClient, AviationApiMapper mapper,
-                             @Value("${app.aviation.airports-path:/v1/airports}") String airportsPath) {
+                             @Value("${app.aviation.airports-path:/v1/airports}") String airportsPath,
+                             MetricsService metricsService) {
         this.aviationWebClient = aviationWebClient;
         this.mapper = mapper;
         this.airportsPath = airportsPath;
+        this.metrics = metricsService;
     }
 
     @Override
@@ -38,16 +44,23 @@ public class AviationApiClient implements AviationProvider {
     @Retry(name = "aviation")
     @TimeLimiter(name = "aviation")
     public Mono<Airport> getAirportByIcao(String icao) {
+        var sample = metrics.startSample();
         return aviationWebClient.get()
                                 .uri(b -> b.path(airportsPath).queryParam("apt", icao).build())
                                 .retrieve()
                                 .onStatus(HttpStatusCode::is4xxClientError, rsp -> rsp.createException().flatMap(Mono::error))
                                 .onStatus(HttpStatusCode::is5xxServerError, rsp -> rsp.createException().flatMap(Mono::error))
                                 .bodyToMono(Map.class)
-                                .flatMap(body -> Mono.justOrEmpty(mapper.toAirport(icao, body)));
+                                .flatMap(body -> Mono.justOrEmpty(mapper.toAirport(icao, body)))
+                                .doOnSuccess(a -> metrics.recordExternalCall(sample, SERVICE_NAME, "success"))
+                                .doOnError(e -> {
+                                    log.error(e.getMessage(), e);
+                                    metrics.recordExternalCall(sample, SERVICE_NAME, "error");
+                                });
     }
 
     private Mono<Airport> fallback(String icao, Throwable t) {
+        metrics.recordExternalCall(metrics.startSample(), SERVICE_NAME, "fallback");
         return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Airport %s not found".formatted(icao), t));
     }
 }
