@@ -1,8 +1,27 @@
 server:
-    port: 8080
+  port: 8080
 spring:
-    application:
-        name: aviation-api-wrapper
+  application:
+    name: aviation-api-wrapper
+app:
+  aviation:
+    base-url: https://api.aviationapi.com
+    airports-path: /v1/airports
+    connect-timeout-ms: 2000
+    read-timeout-ms: 3000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles:
+        all: 0.5,0.95,0.99
+      percentiles-histogram:
+        all: true
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
