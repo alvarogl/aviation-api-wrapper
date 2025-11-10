@@ -71,8 +71,9 @@ public class AviationApiClient implements AviationProvider {
         }).cache();
     }
 
-    private Mono<Airport> fallback(String icao, Throwable t) {
+    Mono<Airport> fallback(String icao, Throwable t) {
         metrics.recordExternalCall(metrics.startSample(), SERVICE_NAME, "fallback");
-        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Airport %s not found".formatted(icao), t));
+        return Mono.error(new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                                                       "Unable to reach upstream provider for %s".formatted(icao), t));
     }
 }
