@@ -31,7 +31,7 @@ public class AviationApiMapper {
                       .latitude(GeoUtils.dmsToDecimal(s(m, "latitude")).orElse(null))
                       .latitudeSec(s(m, "latitude_sec"))
                       .longitude(GeoUtils.dmsToDecimal(s(m, "longitude")).orElse(null))
-                      .longitudeSec(s(m, "latitude_sec"))
+                      .longitudeSec(s(m, "longitude_sec"))
                       .elevation(intOrNull(s(m, "elevation")))
                       .tpa(intOrNull(s(m, "tpa")))
                       .magneticVariation(GeoUtils.parseMagneticVariation(s(m, "magnetic_variation")).orElse(null))
@@ -41,7 +41,7 @@ public class AviationApiMapper {
                       .responsibleArtcc(s(m, "responsible_artcc"))
                       .responsibleArtccName(s(m, "responsible_artcc_name"))
                       .fssPhoneNumber(s(m, "fss_phone_number"))
-                      .fssPhoneNumberTollfree(s(m, "fss_phone_number_tollfree"))
+                      .fssPhoneNumberTollfree(s(m, "fss_phone_numer_tollfree"))
                       .notamFacilityIdent(s(m, "notam_facility_ident"))
                       .status(s(m, "status"))
                       .certificationTypedate(s(m, "certification_typedate"))
@@ -116,4 +116,3 @@ public class AviationApiMapper {
         return ("Y".equalsIgnoreCase(s) || "TRUE".equalsIgnoreCase(s));
     }
 }
-
