@@ -24,9 +24,9 @@ public class Airport {
     String manager;
     String managerPhone;
     Double latitude;
-    Double latitudeSec;
+    String latitudeSec;
     Double longitude;
-    Double longitudeSec;
+    String longitudeSec;
     Integer elevation;
     Integer tpa;
     Integer magneticVariation;
