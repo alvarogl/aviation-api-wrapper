@@ -53,7 +53,7 @@ class AviationApiMapperTest {
                                                                 "responsible_artcc": "ZNY",
                                                                 "responsible_artcc_name": "NEW YORK",
                                                                 "fss_phone_number": "",
-                                                                "fss_phone_number_tollfree": "1-800-WX-BRIEF",
+                                                                "fss_phone_numer_tollfree": "1-800-WX-BRIEF",
                                                                 "notam_facility_ident": "JFK",
                                                                 "status": "O",
                                                                 "certification_typedate": "I E S 05/1973",
